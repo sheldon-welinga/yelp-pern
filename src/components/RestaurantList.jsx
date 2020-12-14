@@ -1,18 +1,36 @@
-import React, { useContext } from "react";
+import React, { Fragment, useContext } from "react";
 import { withRouter } from "react-router-dom";
 import { RestaurantContext } from "../context/RestaurantsContext";
+import StarRating from "./StarRating";
 
 const RestaurantList = (props) => {
   const { restaurants, deleteRestaurant } = useContext(RestaurantContext);
 
   // console.log(restaurants);
 
-  const handleEdit = (restaurantId) => {
+  const handleEdit = (e, restaurantId) => {
+    e.stopPropagation();
     props.history.push(`/restaurants/${restaurantId}/edit`);
   };
 
-  const handleDelete = (restaurantId) => {
+  const handleDelete = (e, restaurantId) => {
+    e.stopPropagation();
     deleteRestaurant(restaurantId);
+  };
+
+  const handleRestaurantSelect = (restaurantId) => {
+    props.history.push(`/restaurants/${restaurantId}`);
+  };
+
+  const renderRating = (reviews, count) => {
+    let rating_count = 0;
+    count === null ? (rating_count = 0) : (rating_count = count);
+    return (
+      <Fragment>
+        <StarRating rating={reviews} />{" "}
+        <span className="text-warning ml-1">({rating_count} reviews)</span>
+      </Fragment>
+    );
   };
 
   return (
@@ -31,17 +49,28 @@ const RestaurantList = (props) => {
         <tbody>
           {restaurants.length
             ? restaurants.map(
-                ({ name, location, price_range, restaurant_id }) => {
+                ({
+                  restaurant_id,
+                  name,
+                  location,
+                  price_range,
+                  rating_count,
+                  average_rating,
+                }) => {
                   return (
-                    <tr key={restaurant_id}>
+                    <tr
+                      key={restaurant_id}
+                      onClick={() => handleRestaurantSelect(restaurant_id)}
+                    >
                       <td>{name}</td>
                       <td>{location}</td>
                       <td>{"$".repeat(price_range)}</td>
-                      <td>rating</td>
+                      <td>{renderRating(average_rating, rating_count)}</td>
+                      {/* <td>rating</td> */}
                       <td>
                         <button
                           className="btn btn-warning"
-                          onClick={() => handleEdit(restaurant_id)}
+                          onClick={(e) => handleEdit(e, restaurant_id)}
                         >
                           Edit
                         </button>
@@ -49,7 +78,7 @@ const RestaurantList = (props) => {
                       <td>
                         <button
                           className="btn btn-danger"
-                          onClick={() => handleDelete(restaurant_id)}
+                          onClick={(e) => handleDelete(e, restaurant_id)}
                         >
                           Delete
                         </button>

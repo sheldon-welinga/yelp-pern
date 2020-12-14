@@ -9,6 +9,7 @@ class RestaurantProvider extends Component {
 
     this.state = {
       restaurants: [],
+      // reviews: [],
       // restaurant: {},
     };
   }
@@ -146,6 +147,51 @@ class RestaurantProvider extends Component {
     }
   };
 
+  //get all reviews for a given restaurant
+  getReviews = async (restaurantId) => {
+    try {
+      const configOptions = {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      };
+
+      const response = await fetch(
+        `${API_URL}/reviews/${restaurantId}`,
+        configOptions
+      );
+
+      const data = await response.json();
+
+      return data;
+    } catch (err) {
+      console.log(err.message);
+    }
+  };
+
+  //create a new review
+
+  addReview = async (review) => {
+    try {
+      const configDetails = {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(review),
+      };
+
+      const response = await fetch(`${API_URL}/reviews/new`, configDetails);
+
+      const data = await response.json();
+
+      return data;
+    } catch (err) {
+      console.log(err.message);
+    }
+  };
+
   componentDidMount() {
     this.getRestaurants();
   }
@@ -159,6 +205,8 @@ class RestaurantProvider extends Component {
           deleteRestaurant: this.deleteRestaurant,
           getSingleRestaurant: this.getSingleRestaurant,
           updateRestaurant: this.updateRestaurant,
+          getReviews: this.getReviews,
+          addReview: this.addReview,
         }}
       >
         {this.props.children}

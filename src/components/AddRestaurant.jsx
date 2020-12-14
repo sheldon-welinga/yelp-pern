@@ -28,6 +28,12 @@ class AddRestaurant extends React.Component {
     if (this.state.price_range !== "Price Range") {
       addRestaurant(this.state);
     }
+
+    this.setState({
+      name: "",
+      location: "",
+      price_range: "Price Range",
+    });
   };
 
   render() {
